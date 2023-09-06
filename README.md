@@ -4,7 +4,7 @@
 >
 > php >= 7.4
 
-* 首次使用请自行到百度翻译申请APP_ID/APP_SECRET; 并写入fanyi脚本;
+* 首次使用请自行到百度翻译申请APP_ID/APP_SECRET; 并写入./fanyi.ini;
 * 注意不要把自己的APP_ID/APP_SECRET提交到git, 用多了是要收费的
 * 申请地址: https://fanyi-api.baidu.com/api/trans/product/desktop
 
