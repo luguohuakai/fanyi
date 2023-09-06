@@ -1,0 +1,21 @@
+{
+    "name": "luguohuakai/fanyi",
+    "description": "Yii2 messages auto fanyi",
+    "type": "library",
+    "require": {
+        "php": ">=7.4",
+        "luguohuakai/func": "~1.0.17"
+    },
+    "license": "apache",
+    "autoload": {
+        "psr-4": {
+            "Luguohuakai\\Fanyi\\": ""
+        }
+    },
+    "authors": [
+        {
+            "name": "DM",
+            "email": "769245396@qq.com"
+        }
+    ]
+}

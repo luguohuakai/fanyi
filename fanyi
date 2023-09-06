@@ -1,0 +1,214 @@
+<?php
+
+use luguohuakai\func\Func;
+
+require './vendor/autoload.php';
+
+if ($argc !== 3) {
+    Func::logError('Params Error!');
+    Func::logError('Example: php ./vendor/luguohuakai/fanyi/fanyi --file=./center/messages/en/app.php --language=en');
+    exit(1);
+}
+
+if (!is_file('./fanyi.ini')) copy('./vendor/luguohuakai/fanyi/fanyi.ini', './fanyi.ini');
+
+$ini = new Ini('./fanyi.ini');
+$app_id = $ini->get('app_id');
+$app_secret = $ini->get('app_secret');
+
+if (!$app_id || !$app_secret) {
+    Func::logError('APP_ID/APP_SECRET is empty!');
+    Func::logError('Apply address: https://fanyi-api.baidu.com/api/trans/product/desktop');
+    Func::logError('And then write it into ./fanyi.ini');
+    exit(1);
+}
+
+// 要翻译的目标文件
+$file = explode('=', $argv[1])[1];
+// 要翻译成的目标语言
+$language = explode('=', $argv[2])[1];
+
+$arr = require $file;
+$str = file_get_contents($file);
+
+
+class Ini
+{
+    private string $file;
+    public array $all = [];
+
+    public function __construct($file)
+    {
+        $this->file = $file;
+        if (is_file($file)) {
+            $rs = parse_ini_file($file);
+            if ($rs !== false) $this->all = $rs;
+        }
+    }
+
+    public function get($key, $default = null)
+    {
+        if (!is_file($this->file)) return $default;
+        return $this->all[$key] ?? $default;
+    }
+
+    public function set($key, $value): bool
+    {
+        $data = array_merge($this->all, [$key => $value]);
+        return !(file_put_contents($this->file, $this->arrayToIni($data)) === false);
+    }
+
+    public function setAll($data): bool
+    {
+        $data = array_merge($this->all, $data);
+        return !(file_put_contents($this->file, $this->arrayToIni($data)) === false);
+    }
+
+    private function arrayToIni($data): string
+    {
+        if (empty($data)) return '';
+        $str = '';
+        foreach ($data as $key => $datum) {
+            $str .= "$key=$datum\r\n";
+        }
+        return $str;
+    }
+}
+
+// 翻译入口
+function translate($query, $from, $to)
+{
+    global $app_id;
+    global $app_secret;
+    $url = 'http://api.fanyi.baidu.com/api/trans/vip/translate';
+    $args = [
+        'q' => $query,
+        'appid' => $app_id,
+        'salt' => rand(10000, 99999),
+        'from' => $from,
+        'to' => $to];
+    $args['sign'] = buildSign($query, $app_id, $args['salt'], $app_secret);
+    $ret = call($url, $args);
+    return json_decode($ret, true);
+}
+
+// 加密
+function buildSign($query, $appID, $salt, $secKey): string
+{/*{{{*/
+    return md5($appID . $query . $salt . $secKey);
+}/*}}}*/
+
+// 发起网络请求
+function call($url, $args = null, $method = "post", $testflag = 0, $timeout = 10, $headers = array())
+{/*{{{*/
+    $ret = false;
+    $i = 0;
+    while ($ret === false) {
+        if ($i > 1)
+            break;
+        if ($i > 0) {
+            sleep(1);
+        }
+        $ret = callOnce($url, $args, $method, false, $timeout, $headers);
+        $i++;
+    }
+    return $ret;
+}/*}}}*/
+
+function callOnce($url, $args = null, $method = "post", $withCookie = false, $timeout = 10, $headers = array())
+{/*{{{*/
+    $ch = curl_init();
+    if ($method == "post") {
+        $data = convert($args);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_POST, 1);
+    } else {
+        $data = convert($args);
+        if ($data) {
+            if (stripos($url, "?") > 0) {
+                $url .= "&$data";
+            } else {
+                $url .= "?$data";
+            }
+        }
+    }
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    if (!empty($headers)) {
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    }
+    if ($withCookie) {
+        curl_setopt($ch, CURLOPT_COOKIEJAR, $_COOKIE);
+    }
+    $r = curl_exec($ch);
+    curl_close($ch);
+    return $r;
+}/*}}}*/
+
+function convert(&$args)
+{/*{{{*/
+    $data = '';
+    if (is_array($args)) {
+        foreach ($args as $key => $val) {
+            if (is_array($val)) {
+                foreach ($val as $k => $v) {
+                    $data .= $key . '[' . $k . ']=' . rawurlencode($v) . '&';
+                }
+            } else {
+                $data .= "$key=" . rawurlencode($val) . "&";
+            }
+        }
+        return trim($data, "&");
+    }
+    return $args;
+}/*}}}*/
+
+function formatEn($word, $word_type = 1)
+{
+    switch ($word_type) {
+        case 2:
+            return ucwords($word);
+        case 3:
+            return $word;
+        case 1:
+        default:
+            return ucfirst($word);
+    }
+}
+
+$i = $n = 0;
+$flag = false;
+foreach ($arr as $k => $v) {
+    if ($v === '') {
+        $i++;
+        $rs = translate($k, 'auto', $language);
+        if (isset($rs['trans_result'][0]['dst'])) {
+            $flag = true;
+            $n++;
+            $dst = $rs['trans_result'][0]['dst'];
+            if ($language === 'en') $dst = formatEn($dst, $ini->get('word_type'));
+            // 搜索并替换
+            $str = str_replace("'$k' => ''", "'$k' => '$dst'", $str);
+            Func::logSuccess("{$rs['trans_result'][0]['src']} => {$rs['trans_result'][0]['dst']}");
+        } else {
+            Func::logError("key:$k,error:" . json_encode($rs));
+        }
+        // 百度api限制
+        if ($i >= 10) {
+            $i = 0;
+            sleep(1);
+        }
+    }
+}
+
+if ($flag) {
+    $res = file_put_contents($file, $str);
+    if ($res) {
+        Func::logPrimary("Success:$n");
+    } else {
+        Func::logError('file_put_contents:error');
+    }
+} else {
+    Func::logPrimary('No change, File not change!');
+}
