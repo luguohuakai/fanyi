@@ -1,5 +1,24 @@
 # 自动翻译使用说明
 
+* 主要用于翻译Yii2的php翻译文件, php文件内返回的是一个数组, 或者类似以下这种都可以翻译
+* 注意: `=>` 这个符号两边有且只能有一个空格; 只会翻译值为空字符串的项
+
+```php
+<?php
+// 测试文件
+return [
+    'Operator' => '',
+    'What are you doing' => '你在干什么',
+    'Ok ok' => '好的好的',
+    '可以的' => '',
+    'What' => '什么',
+    'haha' => '哈哈',
+    'abc' => '',
+    'Delete' => '删去',
+    'Update' => '',
+];
+```
+
 > composer require luguohuakai/fanyi:~1.0.0
 >
 > php >= 7.4
@@ -10,7 +29,7 @@
 
 * 使用方式: `php ./vendor/luguohuakai/fanyi/fanyi --file=./center/messages/en/app.php --language=en`
 
-* 参数解释: `--file=./en/app.php` : 需要翻译的翻译文件; 如: `./zh-CN/log.php`
+* 参数解释: `--file=./en/app.php` : 需要翻译的文件位置; 如: `./zh-CN/log.php`
 * 参数解释: `--language=en` : 需要翻译成什么语言; 见下面`常见语种列表`
 * 注意: 参数位置和格式是固定的不要变动
 * 注意: 翻译完成后需要亲自检查一下, 看看对不对, 不对的地方手动调整一下
