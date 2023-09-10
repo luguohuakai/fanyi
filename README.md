@@ -27,7 +27,7 @@ return [
 * 注意不要把自己的APP_ID/APP_SECRET提交到git, 用多了是要收费的
 * 申请地址: https://fanyi-api.baidu.com/api/trans/product/desktop
 
-* 使用方式: `php ./vendor/luguohuakai/fanyi/fanyi --file=./center/messages/en/app.php --language=en`
+* 使用方式: `php ./vendor/bin/fanyi --file=./center/messages/en/app.php --language=en`
 
 * 参数解释: `--file=./en/app.php` : 需要翻译的文件位置; 如: `./zh-CN/log.php`
 * 参数解释: `--language=en` : 需要翻译成什么语言; 见下面`常见语种列表`
