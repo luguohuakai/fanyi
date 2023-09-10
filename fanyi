@@ -4,9 +4,9 @@ use luguohuakai\func\Func;
 
 require './vendor/autoload.php';
 
-if ($argc !== 3) {
+if ($argc !== 3 && $argc !== 5) {
     Func::logError('Params Error!');
-    Func::logError('Example: php ./vendor/luguohuakai/fanyi/fanyi --file=./center/messages/en/app.php --language=en');
+    Func::logError('Example: php ./vendor/bin/fanyi --file=./center/messages/en/app.php --language=en');
     exit(1);
 }
 
@@ -27,6 +27,23 @@ if (!$app_id || !$app_secret) {
 $file = explode('=', $argv[1])[1];
 // 要翻译成的目标语言
 $language = explode('=', $argv[2])[1];
+$super = false;
+if ($argc == 5) {
+    $super = true;
+    // 正则匹配
+    $match = explode('=', $argv[3])[1];
+    // 基准文件
+    $base = explode('=', $argv[4])[1];
+    if (!is_file($base)) {
+        Func::logError('Base file not exists: ' . $base);
+        exit(1);
+    }
+    $base_arr = require $base;
+    if (!$base_arr) {
+        Func::logError('Base file is empty: ' . $base);
+        exit(1);
+    }
+}
 
 $arr = require $file;
 $str = file_get_contents($file);
@@ -179,10 +196,23 @@ function formatEn($word, $word_type = 1)
 
 $i = $n = 0;
 $flag = false;
+
+function dealQuery(int $k)
+{
+    global $super;
+    if ($super) {
+        global $match, $base_arr;
+        if (preg_match($match, $k)) {
+            if (isset($base_arr[$k]) && $base_arr[$k]) return $base_arr[$k];
+        }
+    }
+    return $k;
+}
+
 foreach ($arr as $k => $v) {
     if ($v === '') {
         $i++;
-        $rs = translate($k, 'auto', $language);
+        $rs = translate(dealQuery($k), 'auto', $language);
         if (isset($rs['trans_result'][0]['dst'])) {
             $flag = true;
             $n++;

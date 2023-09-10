@@ -4,7 +4,8 @@
     "type": "library",
     "require": {
         "php": ">=7.4",
-        "luguohuakai/func": "~1.0.17"
+        "luguohuakai/func": "~1.0.17",
+        "ext-json": "*"
     },
     "license": "MIT",
     "autoload": {

@@ -34,6 +34,14 @@ return [
 * 注意: 参数位置和格式是固定的不要变动
 * 注意: 翻译完成后需要亲自检查一下, 看看对不对, 不对的地方手动调整一下
 
+## 高级功能
+
+* `php ./vendor/bin/fanyi --file=./center/messages/en/app.php --language=en --match=/\d+/ --base=./center/messages/zh-CN/app.php`
+* 如果匹配规则成立则去基准文件找对应value值进行翻译
+* 参数解释: `--match=/\d+/`: 正则匹配; 常用: /\d+/(由多个数字组成), /T\d+/(如: T10003 E7001); 如有多个用英文逗号隔开 如: `--match=/\d+/,/T\d+/`
+* 参数解释: `--base=./center/messages/zh-CN/app.php`: 基准文件
+* 注意: 参数位置和格式是固定的不要变动
+
 ## 常见语种列表
 
 | 名称     | 代码   | 名称    | 代码  | 名称    | 代码  |
