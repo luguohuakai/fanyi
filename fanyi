@@ -218,7 +218,14 @@ foreach ($arr as $k => $v) {
         if (isset($rs['trans_result'][0]['dst'])) {
             $flag = true;
             $n++;
+            $src = $rs['trans_result'][0]['src'];
             $dst = $rs['trans_result'][0]['dst'];
+            if ($src === $dst) {
+                $n--;
+                Func::logWarn('Original language equals target language, Do not handle anything');
+                Func::logWarn("$src => $dst");
+                continue;
+            }
             if ($language === 'en') $dst = formatEn($dst, $ini->get('word_type'));
             // 修复 将dst中的单引号转义
             $dst = str_replace("'", "\'", $dst);
@@ -228,7 +235,7 @@ foreach ($arr as $k => $v) {
             } else {
                 $str = str_replace("'$k' => ''", "'$k' => '$dst'", $str);
             }
-            Func::logSuccess("{$rs['trans_result'][0]['src']} => {$rs['trans_result'][0]['dst']}");
+            Func::logSuccess("$src => $dst");
         } else {
             Func::logError("key:$k,error:" . json_encode($rs));
         }
