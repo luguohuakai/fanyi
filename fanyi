@@ -188,6 +188,8 @@ foreach ($arr as $k => $v) {
             $n++;
             $dst = $rs['trans_result'][0]['dst'];
             if ($language === 'en') $dst = formatEn($dst, $ini->get('word_type'));
+            // 修复 将dst中的单引号转义
+            $dst = str_replace("'", "\'", $dst);
             // 搜索并替换
             $str = str_replace("'$k' => ''", "'$k' => '$dst'", $str);
             Func::logSuccess("{$rs['trans_result'][0]['src']} => {$rs['trans_result'][0]['dst']}");

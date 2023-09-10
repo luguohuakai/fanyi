@@ -49,4 +49,4 @@ return [
 | 斯洛文尼亚语 | slo  | 瑞典语   | swe | 匈牙利语  | hu  |
 | 繁体中文   | cht  | 越南语   | vie | 	     ||
 
-> 更多语言支持请查看: https://fanyi-api.baidu.com/doc/21
+> 更多语言支持请查看(需要企业认证-可能需要收费): https://fanyi-api.baidu.com/doc/21
