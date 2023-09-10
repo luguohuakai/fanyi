@@ -216,16 +216,15 @@ foreach ($arr as $k => $v) {
         $i++;
         $rs = translate(dealQuery($k), 'auto', $language);
         if (isset($rs['trans_result'][0]['dst'])) {
-            $flag = true;
-            $n++;
             $src = $rs['trans_result'][0]['src'];
             $dst = $rs['trans_result'][0]['dst'];
             if ($src === $dst) {
-                $n--;
                 Func::logWarn('Original language equals target language, Do not handle anything');
                 Func::logWarn("$src => $dst");
                 continue;
             }
+            $flag = true;
+            $n++;
             if ($language === 'en') $dst = formatEn($dst, $ini->get('word_type'));
             // 修复 将dst中的单引号转义
             $dst = str_replace("'", "\'", $dst);
