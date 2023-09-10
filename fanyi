@@ -135,12 +135,11 @@ function call($url, $args = null, $method = "post", $testflag = 0, $timeout = 10
 function callOnce($url, $args = null, $method = "post", $withCookie = false, $timeout = 10, $headers = array())
 {/*{{{*/
     $ch = curl_init();
+    $data = convert($args);
     if ($method == "post") {
-        $data = convert($args);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_POST, 1);
     } else {
-        $data = convert($args);
         if ($data) {
             if (stripos($url, "?") > 0) {
                 $url .= "&$data";
@@ -202,8 +201,11 @@ function dealQuery(int $k)
     global $super;
     if ($super) {
         global $match, $base_arr;
-        if (preg_match($match, $k)) {
-            if (isset($base_arr[$k]) && $base_arr[$k]) return $base_arr[$k];
+        $match_arr = explode(',', $match);
+        foreach ($match_arr as $item) {
+            if (preg_match($item, $k)) {
+                if (isset($base_arr[$k]) && $base_arr[$k]) return $base_arr[$k];
+            }
         }
     }
     return $k;
@@ -221,7 +223,11 @@ foreach ($arr as $k => $v) {
             // 修复 将dst中的单引号转义
             $dst = str_replace("'", "\'", $dst);
             // 搜索并替换
-            $str = str_replace("'$k' => ''", "'$k' => '$dst'", $str);
+            if (is_int($k)) {
+                $str = str_replace("$k => ''", "$k => '$dst'", $str);
+            } else {
+                $str = str_replace("'$k' => ''", "'$k' => '$dst'", $str);
+            }
             Func::logSuccess("{$rs['trans_result'][0]['src']} => {$rs['trans_result'][0]['dst']}");
         } else {
             Func::logError("key:$k,error:" . json_encode($rs));

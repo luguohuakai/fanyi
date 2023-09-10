@@ -5,7 +5,8 @@
     "require": {
         "php": ">=7.4",
         "luguohuakai/func": "~1.0.17",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-curl": "*"
     },
     "license": "MIT",
     "autoload": {

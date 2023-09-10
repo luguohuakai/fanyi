@@ -19,7 +19,7 @@ return [
 ];
 ```
 
-> composer require luguohuakai/fanyi:~1.0.0
+> composer require luguohuakai/fanyi:~1.0.3 --dev
 >
 > php >= 7.4
 
