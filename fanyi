@@ -220,7 +220,7 @@ foreach ($arr as $k => $v) {
             $dst = $rs['trans_result'][0]['dst'];
             if ($src === $dst) {
                 Func::logWarn('Original language equals target language, Do not handle anything');
-                Func::logWarn("$src => $dst");
+                Func::logWarn("$k => $src => $dst");
                 continue;
             }
             $flag = true;
@@ -234,7 +234,7 @@ foreach ($arr as $k => $v) {
             } else {
                 $str = str_replace("'$k' => ''", "'$k' => '$dst'", $str);
             }
-            Func::logSuccess("$src => $dst");
+            Func::logSuccess("$k => $src => $dst");
         } else {
             Func::logError("key:$k,error:" . json_encode($rs));
         }
