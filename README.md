@@ -36,10 +36,10 @@ return [
 
 ## 高级功能
 
-* `php ./vendor/bin/fanyi --file=./center/messages/en/app.php --language=en --match=/\d+/ --base=./center/messages/zh-CN/app.php`
+* `php ./vendor/bin/fanyi --file=./center/messages/en/app.php --language=en --match=/^\d+/ --base=./center/messages/zh-CN/app.php`
 * 如果匹配规则成立则去基准文件找对应value值进行翻译
-* 参数解释: `--match=/\d+/`: 正则匹配; 常用: /\d+/(由多个数字组成), /T\d+/(如: T10003 E7001); 如有多个用英文逗号隔开 如: `--match=/\d+/,/T\d+/`
-* 参数解释: `--base=./center/messages/zh-CN/app.php`: 基准文件
+* 参数解释: `--match=/^\d+/`: 正则匹配; 常用: /^\d+/(由多个数字组成), /^T\d+/(如: T10003 E7001); 如有多个用英文逗号隔开 如: `--match=/^\d+/,/^T\d+/`
+* 参数解释: `--base=./center/messages/zh-CN/app.php`: 基准文件, 会去找这个文件中key对应的value进行翻译
 * 注意: 参数位置和格式是固定的不要变动
 
 ## 常见语种列表
