@@ -196,7 +196,7 @@ function formatEn($word, $word_type = 1)
 $i = $n = 0;
 $flag = false;
 
-function dealQuery(int $k)
+function dealQuery($k)
 {
     global $super;
     if ($super) {
