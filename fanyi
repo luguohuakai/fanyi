@@ -201,10 +201,14 @@ function dealQuery($k)
     global $super;
     if ($super) {
         global $match, $base_arr;
-        $match_arr = explode(',', $match);
-        foreach ($match_arr as $item) {
-            if (preg_match($item, $k)) {
-                if (isset($base_arr[$k]) && $base_arr[$k]) return $base_arr[$k];
+        if ($match === 'all') {
+            if (isset($base_arr[$k]) && $base_arr[$k]) return $base_arr[$k];
+        } else {
+            $match_arr = explode(',', $match);
+            foreach ($match_arr as $item) {
+                if (preg_match($item, $k)) {
+                    if (isset($base_arr[$k]) && $base_arr[$k]) return $base_arr[$k];
+                }
             }
         }
     }
